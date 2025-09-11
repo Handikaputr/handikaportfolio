@@ -209,6 +209,9 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
         </div>
       </div>
     </div>
+     <div class="img absolute bottom-0 w-screen">
+        <img class="" :src="'assetImg/cloud/1x/whiteCloud.webp'" alt="">
+    </div>
   </section>
 </template>
 

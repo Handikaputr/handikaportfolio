@@ -8,7 +8,7 @@ const isLoading = ref(true)
 onMounted(() => {
   setTimeout(() => {
     isLoading.value = false
-  }, 1800) // durasi loading, bisa diubah sesuai kebutuhan
+  }, 2000) // durasi loading, bisa diubah sesuai kebutuhan
 })
 </script>
   
