@@ -95,22 +95,7 @@ const startAutoPlay = () => { stopAutoPlay(); isAutoPlaying.value = true; autoPl
 const stopAutoPlay = () => { isAutoPlaying.value = false; if (autoPlayInterval) { clearInterval(autoPlayInterval); autoPlayInterval = null } }
 
 // Touch swipe
-let startX = 0, isDragging = false
-const handleTouchStart = (e) => { startX = e.touches[0].clientX; isDragging = true; stopAutoPlay(); carouselTrack.value.style.transition = 'none' }
-const handleTouchMove = (e) => {
-  if (!isDragging) return
-  const diffX = startX - e.touches[0].clientX
-  const baseTranslate = -(currentSlide.value * (100 / slidesPerView.value))
-  carouselTrack.value.style.transform = `translateX(calc(${baseTranslate}% - ${diffX}px))`
-}
-const handleTouchEnd = (e) => {
-  if (!isDragging) return
-  const diffX = startX - e.changedTouches[0].clientX
-  carouselTrack.value.style.transition = 'transform 0.5s ease-in-out'
-  if (Math.abs(diffX) > 50) diffX > 0 ? nextSlide() : prevSlide()
-  else carouselTrack.value.style.transform = `translateX(-${currentSlide.value * (100 / slidesPerView.value)}%)`
-  isDragging = false; setTimeout(startAutoPlay, 3000)
-}
+
 const handleResize = () => { if (currentSlide.value > maxSlide.value) currentSlide.value = maxSlide.value }
 
 onMounted(() => { startAutoPlay(); window.addEventListener('resize', handleResize) })
@@ -166,7 +151,6 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
         >
       <div class="relative flex justify-center"
             :key="project.id"
-           @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
            @mouseenter="stopAutoPlay" @mouseleave="startAutoPlay">
         <div class="flex transition-transform duration-500 ease-in-out"
              ref="carouselTrack">

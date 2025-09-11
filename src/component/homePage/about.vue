@@ -5,7 +5,7 @@ const currentSlide = ref(0)
 const carouselContainer = ref(null)
 const totalSlides = 3
 const isAutoPlaying = ref(true)
-let autoPlayInterval = 4
+let autoPlayInterval = 1
 
 const skills = [
   {
@@ -59,7 +59,7 @@ const goToSlide = (index) => {
 
 const startAutoPlay = () => {
   isAutoPlaying.value = true
-  autoPlayInterval = setInterval(nextSlide, 5000)
+  autoPlayInterval = setInterval(nextSlide, 10000)
 }
 
 const stopAutoPlay = () => {
@@ -70,43 +70,8 @@ const stopAutoPlay = () => {
   }
 }
 
-// Touch/Swipe handling
-let startX = 0
-let startY = 0
-let isDragging = false
 
-const handleTouchStart = (e) => {
-  startX = e.touches[0].clientX
-  startY = e.touches[0].clientY
-  isDragging = true
-  stopAutoPlay()
-}
 
-const handleTouchMove = (e) => {
-  if (!isDragging) return
-  e.preventDefault()
-}
-
-const handleTouchEnd = (e) => {
-  if (!isDragging) return
-  
-  const endX = e.changedTouches[0].clientX
-  const endY = e.changedTouches[0].clientY
-  const diffX = startX - endX
-  const diffY = startY - endY
-  
-  // Only trigger swipe if horizontal movement is greater than vertical
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) {
-      nextSlide()
-    } else {
-      prevSlide()
-    }
-  }
-  
-  isDragging = false
-  setTimeout(startAutoPlay, 3000) // Resume autoplay after 3 seconds
-}
 
 onMounted(() => {
   startAutoPlay()
@@ -170,9 +135,6 @@ onUnmounted(() => {
       <div class="lg:hidden w-full max-w-md mx-auto relative">
         <!-- Carousel Container -->
         <div class="relative overflow-hidden rounded-2xl shadow-2xl"
-             @touchstart="handleTouchStart"
-             @touchmove="handleTouchMove"
-             @touchend="handleTouchEnd"
              @mouseenter="stopAutoPlay"
              @mouseleave="startAutoPlay">
           <div class="flex transition-transform duration-500 ease-in-out"
