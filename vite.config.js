@@ -10,7 +10,7 @@ export default defineConfig({
     vue({
       template: {
         compilerOptions: {
-          isCustomElement: (tag) => [tag.startsWith('ion-'), ['dotlottie-player'].includes(tag)].some(Boolean)
+          isCustomElement: (tag) => tag.startsWith('ion-')
         }
       }
     }),

@@ -11,9 +11,7 @@
           </div>
           <img class="absolute animate__animated animate__zoomIn animate__faster -bottom-20 -left-32 scale-75" :src="'/assetImg/1x/moon.webp'" alt="">
           <img class="absolute -bottom-11 -left-12" :src="'/assetImg/1x/cloud2.webp'" alt="">
-          <dotlottie-player class="absolute animate__animated animate__fadeInUp -left-24 animate__delay-1s mt-20 w-36 h-36"
-            src="https://lottie.host/1622d024-45a7-4f11-bdde-f24498da63be/ojGF2Ujsfj.json" background="transparent" speed="1" loop autoplay>
-          </dotlottie-player>
+           <DotLottieVue class="absolute animate__animated animate__fadeInUp -left-24 animate__delay-1s mt-20 w-36" autoplay loop src="https://lottie.host/bae3bab7-fea4-4756-b529-f5178cfb0760/vwNyMryBA3.lottie" />
           <img class="absolute animate__animated animate__zoomIn -bottom-14 left-8" :src="'/assetImg/1x/cloud1.webp'" alt="">
           <img class="absolute animate__animated animate__zoomIn -bottom-12 -left-24 scale-125" :src="'/assetImg/1x/cloud4.webp'" alt="">
           <img class="absolute animate__animated animate__zoomIn -bottom-16 -left-24" :src="'/assetImg/1x/cloud3.webp'" alt="">
@@ -58,7 +56,7 @@
 <!-- end template -->
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 const cardsContainer = ref(null)
 let cards = []
 let intervalId = null
