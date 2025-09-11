@@ -1,9 +1,20 @@
 <script setup>
-  import homePage from './pages/homePage.vue';
+import { ref, onMounted } from 'vue'
+import Loader from './component/loader.vue'
+import homePage from './pages/homePage.vue'
+
+const isLoading = ref(true)
+
+onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1800) // durasi loading, bisa diubah sesuai kebutuhan
+})
 </script>
   
 <template>
-  <homePage></homePage>
+  <Loader v-if="isLoading" />
+  <homePage v-else />
 </template>
 
 <style scoped></style>

@@ -4,7 +4,7 @@
       <div class="picture-content w-full items-end md:w-1/2 flex md:items-center justify-center">
         <div ref="cardsContainer" class="picture-content scale-90 md:scale-100 w-60 h-96 flex items-center justify-center relative">
           <div class="card card-img card-back-img absolute w-60 h-96 rounded-xl border border-white overflow-hidden">
-            <img class="object-cover w-full h-full" :src="'assetImg/handika_anim.webp'" alt="">
+            <img class="object-cover w-full h-full" :src="'assetImg/namecard.webp'" alt="">
           </div>
           <div class="card absolute w-60 h-96 rounded-xl overflow-hidden border border-white">
             <img class="object-cover w-full h-full" :src="'assetImg/Handikaputra.webp'" alt="">
@@ -35,13 +35,19 @@
             <div class="text-sm animate__animated animate__lightSpeedInRight animate__delay-1s border-t-2 mt-4 pt-2 border-purple-600">
               Explore my portfolio to see a showcase of my work, from interactive 2D experiences in Unity to robust APIs and dynamic websites. Whether you're looking for a talented developer to bring your vision to life or simply want to learn more about my journey, you've come to the right place.
             </div>
-            <a :href="'/cv3.pdf'" download
-              class="flex group animate__animated animate__lightSpeedInRight animate__delay-1s items-center gap-2 bg-gradient-to-br from-purple-400 to-blue-600 rounded-full pl-4 mt-2 hover:bg-purple-400 hover:text-white duration-200 w-fit">
-              download cv
+            <div class="flex animate__animated animate__lightSpeedInRight animate__delay-1s">
+<a :href="'/cv3.pdf'" download
+              class="flex group  items-center gap-2 bg-gradient-to-br from-purple-400 to-blue-600 rounded-full pl-4 mt-2 hover:bg-purple-400 hover:text-white duration-200 w-fit">
+              Download CV
               <div class="w-10 h-10 bg-white border group-hover:bg-black border-purple-500 shadow-sm flex items-center justify-center pl-1 rounded-full">
-                <ion-icon class="text-2xl" name="send"></ion-icon>
+                <ion-icon class="text-2xl" name="download"></ion-icon>
               </div>
             </a>
+            <a href="https://www.linkedin.com/in/handika-putra-478642312/" class="text-blue-400 w-10  h-10 flex items-center justify-center rounded-full  hover:text-blue-600 duration-200 ml-4 mt-2 animate__animated animate__pulse animate__infinite" target="_blank" rel="noopener noreferrer">
+              <ion-icon class="text-xl w-10 h-10" name="logo-linkedin"></ion-icon>
+            </a>
+            </div>
+            
           </div>
         </div>
       </div>

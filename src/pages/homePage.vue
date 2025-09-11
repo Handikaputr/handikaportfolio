@@ -1,6 +1,7 @@
 <script setup>
     import About from '@/component/homePage/about.vue';
 import Beranda from '@/component/homePage/beranda.vue';
+import News from '@/component/homePage/news.vue';
 import Project from '@/component/homePage/project.vue';
 import navigation from '@/component/navigation.vue';
 </script>
@@ -10,5 +11,6 @@ import navigation from '@/component/navigation.vue';
     <Beranda></Beranda>
     <About></About>
     <Project></Project> 
+    <News></News>
     </div>
 </template>

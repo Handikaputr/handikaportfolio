@@ -118,16 +118,45 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
 </script>
 
 <template>
-  <section id="my-project" class="w-full min-h-[820px] bg-white flex flex-col items-center justify-center py-20 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
+  <section id="project" class="w-full min-h-[820px] bg-white flex flex-col items-center justify-center py-20 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
     <!-- Header -->
-    <div class="text-center mb-16 relative z-10 px-4">
-      <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent font-space">
-        My Projects
-      </h2>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto mt-4 leading-relaxed">
-        Explore my collection of Unity educational games and interactive projects
-      </p>
+<div class="text-center mb-16 relative z-10 px-4">
+  <!-- Animated background decoration -->
+  <div class="absolute inset-0 -z-10 opacity-30">
+    <div class="absolute top-8 left-1/4 w-32 h-32 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute -top-4 right-1/3 w-24 h-24 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full blur-xl animate-pulse delay-1000"></div>
+  </div>
+  
+  <div class="relative">
+    <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 bg-clip-text text-transparent font-space tracking-tight">
+      My Projects
+    </h2>
+    <!-- Elegant underline -->
+    <div class="w-16 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mt-3"></div>
+  </div>
+  
+  <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mt-6 leading-relaxed">
+    Explore my collection of 
+    <span class="font-semibold text-gray-700 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Unity educational games</span> 
+    and interactive projects
+  </p>
+  
+  <!-- Subtle indicators -->
+  <div class="flex justify-center items-center gap-6 mt-8 text-sm text-gray-500">
+    <div class="flex items-center gap-2">
+      <div class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
+      <span>Educational</span>
     </div>
+    <div class="flex items-center gap-2">
+      <div class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse delay-300"></div>
+      <span>Interactive</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse delay-700"></div>
+      <span>Unity Engine</span>
+    </div>
+  </div>
+</div>
 
     <!-- Mobile/Tablet: Carousel -->
     <div class="w-full max-w-7xl mx-auto px-4 relative lg:hidden">
@@ -135,7 +164,7 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
         :name="lastSlide == 0 && currentSlide == 3 || lastSlide == 3 && currentSlide == 0  || lastSlide > currentSlide ? 'fader-slide' : 'fade-slide'"
         mode="out-in"
         >
-      <div class="relative "
+      <div class="relative flex justify-center"
             :key="project.id"
            @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
            @mouseenter="stopAutoPlay" @mouseleave="startAutoPlay">
