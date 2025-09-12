@@ -41,7 +41,7 @@
                 <ion-icon class="text-2xl" name="download"></ion-icon>
               </div>
             </a>
-            <a href="https://www.linkedin.com/in/handika-putra-478642312/" class="text-blue-400 w-10  h-10 flex items-center justify-center rounded-full  hover:text-blue-600 duration-200 ml-4 mt-2 animate__animated animate__pulse animate__infinite" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/in/handika-putra-nur-ilhami-478642312?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-blue-400 w-10  h-10 flex items-center justify-center rounded-full  hover:text-blue-600 duration-200 ml-4 mt-2 animate__animated animate__pulse animate__infinite" target="_blank" rel="noopener noreferrer">
               <ion-icon class="text-xl w-10 h-10" name="logo-linkedin"></ion-icon>
             </a>
             </div>
