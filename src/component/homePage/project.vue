@@ -189,8 +189,8 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
     </div>
 
     <!-- Desktop: Static Grid -->
-    <div class="hidden lg:grid grid-cols-3 gap-8 w-full max-w-7xl mx-auto px-4">
-      <div v-for="project in projects" :key="project.id" class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border border-gray-100 hover:border-gray-200">
+    <div class="hidden lg:grid grid-cols-3 gap-8 w-full max-w-7xl z-10 mx-auto px-4">
+      <div v-for="project in projects" :key="project.id" class="group z-10 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border border-gray-100 hover:border-gray-200">
         <div class="relative overflow-hidden">
           <img :src="project.image" :alt="project.title" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105">
           <div class="absolute top-4 left-4">
@@ -209,8 +209,8 @@ onUnmounted(() => { stopAutoPlay(); window.removeEventListener('resize', handleR
         </div>
       </div>
     </div>
-     <div class="img absolute bottom-0 w-screen">
-        <img class="" :src="'assetImg/cloud/1x/whiteCloud.webp'" alt="">
+     <div class="img absolute -z-1 bottom-0 w-screen">
+        <img class="w-full -z-1 " :src="'assetImg/cloud/1x/whiteCloud.webp'" alt="">
     </div>
   </section>
 </template>

@@ -34,7 +34,7 @@
               Explore my portfolio to see a showcase of my work, from interactive 2D experiences in Unity to robust APIs and dynamic websites. Whether you're looking for a talented developer to bring your vision to life or simply want to learn more about my journey, you've come to the right place.
             </div>
             <div class="flex animate__animated animate__lightSpeedInRight animate__delay-1s">
-<a :href="'/cv3.pdf'" download
+<a :href="'/CV_Handika_Putra_Nur_Ilhami.pdf'" download
               class="flex group  items-center gap-2 bg-gradient-to-br from-purple-400 to-blue-600 rounded-full pl-4 mt-2 hover:bg-purple-400 text-white duration-200 w-fit">
               <strong>Download CV</strong>
               <div class="w-10 h-10 bg-white border text-black group-hover:text-white group-hover:bg-black border-purple-500 shadow-sm flex items-center justify-center pl-1 rounded-full">
