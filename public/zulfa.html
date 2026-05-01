@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zulfa | Semesta Terhenti</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --gold: #e2c05d;
+            --gold-dim: rgba(226, 192, 93, 0.15);
+            --rose: #ff4d6d;
+            --rose-dim: rgba(255, 77, 109, 0.12);
+            --void: #03030a;
+            --cream: rgba(255, 248, 235, 0.85);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--void);
+            font-family: 'Cormorant Garamond', serif;
+            color: white;
+            cursor: none;
+        }
+
+        /* ── CANVAS ── */
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* ── VIGNETTE ── */
+        #vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 25%, rgba(3, 3, 10, 0.92) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* ── SCANLINES subtle ── */
+        #scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px);
+            pointer-events: none;
+            z-index: 6;
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        #cursor {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+
+        #cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 0.5px solid rgba(226, 192, 93, 0.5);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.12s ease, width 0.4s, height 0.4s;
+        }
+
+        #cursor-glow {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(226, 192, 93, 0.04) 0%, transparent 65%);
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            transition: left 0.05s, top 0.05s;
+        }
+
+        /* ── CURTAIN ── */
+        #curtain {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .curtain-ornament {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--gold));
+            margin-bottom: 40px;
+            animation: ornament-grow 1.5s ease forwards;
+            transform-origin: top;
+        }
+
+        @keyframes ornament-grow {
+            from {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .curtain-pre {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 8px;
+            color: rgba(226, 192, 93, 0.4);
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            animation: fade-in 2s ease 0.5s both;
+        }
+
+        .curtain-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 400;
+            letter-spacing: 12px;
+            background: linear-gradient(135deg, #c9a84c, #e2c05d, #f5e0a0, #e2c05d, #c9a84c);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite, fade-in 2s ease 0.8s both;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        .curtain-line {
+            width: 120px;
+            height: 0.5px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin: 28px auto;
+            animation: fade-in 2s ease 1.2s both;
+        }
+
+        .loader-ring {
+            width: 48px;
+            height: 48px;
+            border: 0.5px solid rgba(226, 192, 93, 0.15);
+            border-top: 1px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 2.5s infinite linear, fade-in 1s ease 0.3s both;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .start-btn {
+            margin-top: 48px;
+            background: none;
+            border: 0.5px solid rgba(226, 192, 93, 0.5);
+            color: var(--gold);
+            padding: 16px 52px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 10px;
+            cursor: none;
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            position: relative;
+            overflow: hidden;
+            animation: fade-in 2s ease 2s both;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .start-btn:hover::before {
+            transform: scaleX(1);
+        }
+
+        .start-btn:hover {
+            color: #03030a;
+            letter-spacing: 14px;
+        }
+
+        .start-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .curtain-bottom-ornament {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to top, transparent, var(--gold));
+            margin-top: 48px;
+            animation: ornament-grow-b 1.5s ease 0.3s both;
+            transform-origin: bottom;
+        }
+
+        @keyframes ornament-grow-b {
+            from {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        /* ── MAIN INTERFACE ── */
+        #interface {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 3s ease;
+        }
+
+        /* Top date/label */
+        .top-label {
+            position: absolute;
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.55rem;
+            letter-spacing: 6px;
+            color: rgba(226, 192, 93, 0.35);
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 2s ease 2s;
+        }
+
+        .top-label.active {
+            opacity: 1;
+        }
+
+        /* Corner ornaments */
+        .corner {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            opacity: 0;
+            transition: opacity 3s ease 3s;
+        }
+
+        .corner.tl {
+            top: 28px;
+            left: 28px;
+            border-top: 0.5px solid rgba(226, 192, 93, 0.3);
+            border-left: 0.5px solid rgba(226, 192, 93, 0.3);
+        }
+
+        .corner.tr {
+            top: 28px;
+            right: 28px;
+            border-top: 0.5px solid rgba(226, 192, 93, 0.3);
+            border-right: 0.5px solid rgba(226, 192, 93, 0.3);
+        }
+
+        .corner.bl {
+            bottom: 28px;
+            left: 28px;
+            border-bottom: 0.5px solid rgba(226, 192, 93, 0.3);
+            border-left: 0.5px solid rgba(226, 192, 93, 0.3);
+        }
+
+        .corner.br {
+            bottom: 28px;
+            right: 28px;
+            border-bottom: 0.5px solid rgba(226, 192, 93, 0.3);
+            border-right: 0.5px solid rgba(226, 192, 93, 0.3);
+        }
+
+        .corner.active {
+            opacity: 1;
+        }
+
+        /* Poem container */
+        .poem-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+
+        .poem-ornament-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .poem-ornament-top.active {
+            opacity: 1;
+        }
+
+        .orn-line {
+            width: 60px;
+            height: 0.5px;
+            background: linear-gradient(to right, transparent, rgba(226, 192, 93, 0.4));
+        }
+
+        .orn-line.r {
+            background: linear-gradient(to left, transparent, rgba(226, 192, 93, 0.4));
+        }
+
+        .orn-diamond {
+            width: 5px;
+            height: 5px;
+            border: 0.5px solid rgba(226, 192, 93, 0.6);
+            transform: rotate(45deg);
+        }
+
+        .poem-box {
+            text-align: center;
+            max-width: 600px;
+            padding: 0 24px;
+        }
+
+        .poem-line {
+            display: block;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 2px;
+            line-height: 2;
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 2.5s ease, transform 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+            color: rgba(255, 248, 235, 0.75);
+        }
+
+        .poem-line.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .poem-line b {
+            font-family: 'Cinzel Decorative', serif;
+            font-style: normal;
+            font-weight: 400;
+            background: linear-gradient(135deg, #c9a84c, #e2c05d, #f5e0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .poem-line.spacer {
+            margin-bottom: 20px;
+        }
+
+        .poem-ornament-bottom {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 40px;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .poem-ornament-bottom.active {
+            opacity: 1;
+        }
+
+        /* Bottom signature */
+        .bottom-sig {
+            position: absolute;
+            bottom: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.5rem;
+            letter-spacing: 8px;
+            color: rgba(226, 192, 93, 0.2);
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 2s ease 5s;
+        }
+
+        .bottom-sig.active {
+            opacity: 1;
+        }
+
+        /* Aurora layers */
+        .aurora {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+        }
+
+        .aurora-1 {
+            width: 70vw;
+            height: 40vh;
+            top: -20vh;
+            left: 15vw;
+            background: radial-gradient(ellipse, rgba(226, 192, 93, 0.06) 0%, transparent 70%);
+            animation: aurora-drift 11s ease-in-out infinite;
+        }
+
+        .aurora-2 {
+            width: 50vw;
+            height: 30vh;
+            top: -15vh;
+            left: 25vw;
+            background: radial-gradient(ellipse, rgba(255, 77, 109, 0.04) 0%, transparent 70%);
+            animation: aurora-drift 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes aurora-drift {
+
+            0%,
+            100% {
+                transform: scale(1) translateX(0);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.2) translateX(5%);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div id="vignette"></div>
+    <div id="scanlines"></div>
+
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+    <div id="cursor-glow"></div>
+
+    <!-- CURTAIN -->
+    <div id="curtain">
+        <div class="curtain-ornament"></div>
+        <p class="curtain-pre">Semesta Menyimpan Sebuah Nama</p>
+        <div class="curtain-title">Zulfa</div>
+        <div class="curtain-line"></div>
+        <div class="loader-ring"></div>
+        <button class="start-btn" onclick="startExperience()"><span>Manifestasikan</span></button>
+        <div class="curtain-bottom-ornament"></div>
+    </div>
+
+    <!-- MAIN INTERFACE -->
+    <div id="interface">
+        <div class="top-label">∞ &nbsp; semesta &nbsp;·&nbsp; perasaan &nbsp;·&nbsp; gravitasi &nbsp; ∞</div>
+
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="poem-container">
+            <div class="poem-ornament-top">
+                <div class="orn-line"></div>
+                <div class="orn-diamond"></div>
+                <div class="orn-line r"></div>
+            </div>
+
+            <div class="poem-box">
+                <span class="poem-line">Semesta tidak pernah bertanya padaku</span>
+                <span class="poem-line spacer">ke mana aku ingin jatuh —</span>
+                <span class="poem-line">ia hanya mengarahkan semua jalanku</span>
+                <span class="poem-line spacer">menuju satu nama : <b>Zulfa</b>.</span>
+                <span class="poem-line">Dan aku,</span>
+                <span class="poem-line">seperti cahaya yang tak bisa memilih arahnya sendiri,</span>
+                <span class="poem-line spacer">datang — dan selalu datang kembali.</span>
+                <span class="poem-line">Bukan karena aku harus,</span>
+                <span class="poem-line">tapi karena di antara seluruh galaksi yang ada,</span>
+                <span class="poem-line"><b>Zulfa</b> adalah satu-satunya tempat</span>
+                <span class="poem-line">yang terasa seperti rumah.</span>
+            </div>
+
+            <div class="poem-ornament-bottom">
+                <div class="orn-line"></div>
+                <div class="orn-diamond"></div>
+                <div class="orn-line r"></div>
+            </div>
+        </div>
+
+        <div class="bottom-sig">dengan seluruh diam yang tersisa</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, particles, starField, nebulaCloud;
+        let isStarted = false;
+        const particleCount = 30000;
+        const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+        const cursorEl = document.getElementById('cursor');
+        const ringEl = document.getElementById('cursor-ring');
+        const glowEl = document.getElementById('cursor-glow');
+        const particleData = [];
+        let time = 0;
+        let ringX = 0, ringY = 0;
+        let curX = 0, curY = 0;
+
+        // ── CURSOR ──
+        document.addEventListener('mousemove', e => {
+            curX = e.clientX; curY = e.clientY;
+            cursorEl.style.left = curX + 'px';
+            cursorEl.style.top = curY + 'px';
+            glowEl.style.left = curX + 'px';
+            glowEl.style.top = curY + 'px';
+            mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.ty = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function updateRing() {
+            ringX += (curX - ringX) * 0.1;
+            ringY += (curY - ringY) * 0.1;
+            ringEl.style.left = ringX + 'px';
+            ringEl.style.top = ringY + 'px';
+            requestAnimationFrame(updateRing);
+        }
+        updateRing();
+
+        // ── THREE.JS ──
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(innerWidth, innerHeight);
+            renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            createStarfield();
+            createNebula();
+            createParticles();
+            animate();
+        }
+
+        function createStarfield() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(8000 * 3);
+            const col = new Float32Array(8000 * 3);
+            for (let i = 0; i < 8000; i++) {
+                pos[i * 3] = (Math.random() - 0.5) * 80;
+                pos[i * 3 + 1] = (Math.random() - 0.5) * 80;
+                pos[i * 3 + 2] = (Math.random() - 0.5) * 80;
+                const t = Math.random();
+                col[i * 3] = 0.3 + t * 0.5;
+                col[i * 3 + 1] = 0.25 + t * 0.2;
+                col[i * 3 + 2] = 0.2 + t * 0.6;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+            starField = new THREE.Points(geo, new THREE.PointsMaterial({
+                size: 0.015, vertexColors: true,
+                transparent: true, opacity: 0.6,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            }));
+            scene.add(starField);
+        }
+
+        function createNebula() {
+            // Soft nebula glow using large transparent spheres
+            const colors = [0xe2c05d, 0xff4d6d, 0x9b59b6, 0xff4d6d];
+            const positions = [[-3, 1, -8], [3, -1, -8], [0, 0, -6], [-1, 2, -7]];
+            colors.forEach((c, i) => {
+                const geo = new THREE.SphereGeometry(2.5 + i * 0.5, 8, 8);
+                const mat = new THREE.MeshBasicMaterial({
+                    color: c, transparent: true, opacity: 0.015,
+                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(...positions[i]);
+                scene.add(mesh);
+            });
+        }
+
+        // Glowing particle texture
+        function makeParticleTexture() {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            g.addColorStop(0, 'rgba(255,255,255,1)');
+            g.addColorStop(0.15, 'rgba(255,255,255,0.9)');
+            g.addColorStop(0.5, 'rgba(255,255,255,0.2)');
+            g.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 128, 128);
+            return new THREE.CanvasTexture(c);
+        }
+
+        function createParticles() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(particleCount * 3);
+            const col = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            const gold = new THREE.Color(0xe2c05d);
+            const rose = new THREE.Color(0xff4d6d);
+            const violet = new THREE.Color(0x9b59b6);
+
+            for (let i = 0; i < particleCount; i++) {
+                // Dual-arm spiral galaxy
+                const arm = Math.floor(Math.random() * 2);
+                const armAngle = arm * Math.PI;
+                const t = Math.random();
+                const angle = armAngle + t * Math.PI * 6;
+                const radius = 1.5 + t * 9 + Math.random() * 1.5;
+                const spread = (1 - t) * 1.8 * (Math.random() - 0.5);
+
+                pos[i * 3] = Math.cos(angle) * radius + spread * Math.cos(angle + Math.PI / 2);
+                pos[i * 3 + 1] = Math.sin(angle) * radius * 0.4 + spread * 0.3;
+                pos[i * 3 + 2] = (Math.random() - 0.5) * 4 + spread;
+
+                const palette = Math.random();
+                let c;
+                if (palette < 0.5) c = gold.clone().lerp(rose, Math.random() * 0.3);
+                else if (palette < 0.8) c = rose.clone().lerp(violet, Math.random());
+                else c = new THREE.Color(0xffffff);
+
+                col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+                sizes[i] = 0.5 + Math.random() * 2;
+
+                particleData.push({
+                    angle, radius,
+                    speed: 0.001 + Math.random() * 0.006,
+                    spread,
+                    baseY: pos[i * 3 + 1],
+                    floatAmp: (Math.random() - 0.5) * 0.08,
+                    floatFreq: 0.5 + Math.random() * 1.5,
+                    floatOffset: Math.random() * Math.PI * 2,
+                    targetX: 0, targetY: 0, targetZ: 0
+                });
+            }
+
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+            geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const mat = new THREE.PointsMaterial({
+                size: 0.04,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.85,
+                map: makeParticleTexture(),
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true
+            });
+
+            particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+        }
+
+        function buildNameTargets() {
+            const c = document.createElement('canvas');
+            const ctx = c.getContext('2d');
+            c.width = 1200; c.height = 260;
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Try to use Cinzel Decorative, fallback to serif
+            ctx.font = 'bold 180px "Cinzel Decorative", Georgia, serif';
+            ctx.fillText('ZULFA', 600, 130);
+
+            const px = ctx.getImageData(0, 0, 1200, 260).data;
+            const coords = [];
+            for (let y = 0; y < 260; y += 2) {
+                for (let x = 0; x < 1200; x += 2) {
+                    if (px[(y * 1200 + x) * 4] > 100) {
+                        coords.push({
+                            x: (x - 600) * 0.0065,
+                            y: -(y - 130) * 0.0065,
+                            z: (Math.random() - 0.5) * 0.3
+                        });
+                    }
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                const t = coords[i % coords.length];
+                particleData[i].targetX = t.x + (Math.random() - 0.5) * 0.05;
+                particleData[i].targetY = t.y + (Math.random() - 0.5) * 0.05;
+                particleData[i].targetZ = t.z;
+            }
+        }
+
+        let formationProgress = 0;
+        let dispersing = false;
+        let disperseTimer = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005;
+
+            mouse.x += (mouse.tx - mouse.x) * 0.04;
+            mouse.y += (mouse.ty - mouse.y) * 0.04;
+
+            const pos = particles.geometry.attributes.position.array;
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const d = particleData[i];
+
+                if (!isStarted) {
+                    // Spiral vortex with organic breathing
+                    d.angle += d.speed;
+                    const wobble = 1 + Math.sin(time * 1.5 + i * 0.0001) * 0.05;
+                    const r = d.radius * wobble;
+                    pos[i3] = Math.cos(d.angle) * r + d.spread * Math.cos(d.angle + Math.PI / 2) * 0.5;
+                    pos[i3 + 1] = Math.sin(d.angle) * r * 0.4 + d.spread * 0.2
+                        + Math.sin(time * d.floatFreq + d.floatOffset) * d.floatAmp;
+                    pos[i3 + 2] = d.spread * 0.8 + Math.sin(time * 0.5 + i * 0.001) * 0.3;
+                } else {
+                    formationProgress = Math.min(1, formationProgress + 0.0003);
+                    const ease = 1 - Math.pow(1 - formationProgress, 3);
+
+                    // Lerp toward name shape
+                    pos[i3] += (d.targetX - pos[i3]) * 0.025 * (0.5 + ease * 0.5);
+                    pos[i3 + 1] += (d.targetY - pos[i3 + 1]) * 0.025 * (0.5 + ease * 0.5);
+                    pos[i3 + 2] += (d.targetZ - pos[i3 + 2]) * 0.025;
+
+                    // Subtle alive breathing once formed
+                    if (formationProgress > 0.7) {
+                        pos[i3 + 1] += Math.sin(time * d.floatFreq * 0.5 + d.floatOffset) * d.floatAmp * 0.3;
+                    }
+
+                    // Mouse repulsion
+                    const mdx = pos[i3] - mouse.x * 4;
+                    const mdy = pos[i3 + 1] - mouse.y * 2;
+                    const md = Math.sqrt(mdx * mdx + mdy * mdy);
+                    if (md < 0.8) {
+                        const force = (0.8 - md) / 0.8 * 0.15;
+                        pos[i3] += mdx / md * force;
+                        pos[i3 + 1] += mdy / md * force;
+                    }
+                }
+            }
+
+            particles.geometry.attributes.position.needsUpdate = true;
+
+            // Camera drift
+            camera.position.x += (mouse.x * 0.6 - camera.position.x) * 0.015;
+            camera.position.y += (mouse.y * 0.4 - camera.position.y) * 0.015;
+            camera.lookAt(0, 0, 0);
+
+            if (!isStarted) {
+                particles.rotation.y += 0.0003;
+                particles.rotation.z += 0.001;
+            } else {
+                particles.rotation.y += 0.00005;
+                particles.rotation.z += 0.00002;
+            }
+
+            starField.rotation.y += 0.0002;
+            starField.rotation.x += 0.00005;
+
+            renderer.render(scene, camera);
+        }
+
+        // ── START ──
+        function startExperience() {
+            const curtain = document.getElementById('curtain');
+            curtain.style.opacity = '0';
+            setTimeout(() => {
+                curtain.style.display = 'none';
+                isStarted = true;
+                buildNameTargets();
+
+                const iface = document.getElementById('interface');
+                iface.style.opacity = '1';
+
+                // Activate corners + labels
+                setTimeout(() => {
+                    document.querySelectorAll('.corner, .top-label').forEach(el => el.classList.add('active'));
+                }, 500);
+
+                // Poem ornament
+                setTimeout(() => {
+                    document.querySelector('.poem-ornament-top').classList.add('active');
+                }, 1800);
+
+                // Poem lines staggered
+                const lines = document.querySelectorAll('.poem-line');
+                lines.forEach((l, i) => {
+                    setTimeout(() => l.classList.add('active'), 2200 + i * 1800);
+                });
+
+                // Bottom ornament
+                const lastDelay = 2200 + lines.length * 1800;
+                setTimeout(() => {
+                    document.querySelector('.poem-ornament-bottom').classList.add('active');
+                    document.querySelector('.bottom-sig').classList.add('active');
+                }, lastDelay + 800);
+
+            }, 2500);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+
+</html>
